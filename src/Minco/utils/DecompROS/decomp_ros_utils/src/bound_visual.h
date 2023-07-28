@@ -3,16 +3,15 @@
 
 #include <decomp_basis/data_type.h>
 
-#include <OGRE/OgreVector3.h>
-#include <OGRE/OgreSceneNode.h>
 #include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreSceneNode.h>
+#include <OGRE/OgreVector3.h>
 
 #include <rviz/ogre_helpers/billboard_line.h>
 
-
 namespace decomp_rviz_plugins {
 class BoundVisual {
-public:
+ public:
   BoundVisual(Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_node);
   ~BoundVisual();
 
@@ -23,13 +22,13 @@ public:
   void setColor(float r, float g, float b, float a);
   void setScale(float s);
 
-private:
+ private:
   std::vector<std::unique_ptr<rviz::BillboardLine>> objs_;
 
   Ogre::SceneNode *frame_node_;
 
   Ogre::SceneManager *scene_manager_;
 };
-}
+}  // namespace decomp_rviz_plugins
 
 #endif

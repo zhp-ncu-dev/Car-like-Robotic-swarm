@@ -1,37 +1,37 @@
 #include <decomp_ros_msgs/PolyhedronArray.h>
 #include <rviz/message_filter_display.h>
 
+#include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreSceneNode.h>
+#include <rviz/frame_manager.h>
 #include <rviz/properties/color_property.h>
+#include <rviz/properties/enum_property.h>
 #include <rviz/properties/float_property.h>
 #include <rviz/properties/int_property.h>
-#include <rviz/properties/enum_property.h>
 #include <rviz/visualization_manager.h>
-#include <rviz/frame_manager.h>
-#include <OGRE/OgreSceneNode.h>
-#include <OGRE/OgreSceneManager.h>
 
 #include <rviz/load_resource.h>
 
-#include "mesh_visual.h"
-#include "bound_visual.h"
-#include "vector_visual.h"
-#include <decomp_ros_utils/data_ros_utils.h>
 #include <decomp_geometry/geometric_utils.h>
+#include <decomp_ros_utils/data_ros_utils.h>
+#include "bound_visual.h"
+#include "mesh_visual.h"
+#include "vector_visual.h"
 
 namespace decomp_rviz_plugins {
 class PolyhedronArrayDisplay
     : public rviz::MessageFilterDisplay<decomp_ros_msgs::PolyhedronArray> {
   Q_OBJECT
-public:
+ public:
   PolyhedronArrayDisplay();
   virtual ~PolyhedronArrayDisplay();
 
-protected:
+ protected:
   virtual void onInitialize();
 
   virtual void reset();
 
-private Q_SLOTS:
+ private Q_SLOTS:
   void updateMeshColorAndAlpha();
   void updateBoundColorAndAlpha();
   void updateVsColorAndAlpha();
@@ -39,7 +39,7 @@ private Q_SLOTS:
   void updateScale();
   void updateVsScale();
 
-private:
+ private:
   void processMessage(const decomp_ros_msgs::PolyhedronArray::ConstPtr &msg);
   void visualizeMessage(int state);
   void visualizeMesh();
@@ -65,4 +65,4 @@ private:
   vec_E<std::pair<Vec3f, Vec3f>> vs_;
 };
 
-}
+}  // namespace decomp_rviz_plugins

@@ -1,15 +1,15 @@
 #ifndef VECTOR_VISUAL_H
 #define VECTOR_VISUAL_H
 
-#include <decomp_basis/data_type.h>
-#include <OGRE/OgreVector3.h>
-#include <OGRE/OgreSceneNode.h>
 #include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreSceneNode.h>
+#include <OGRE/OgreVector3.h>
+#include <decomp_basis/data_type.h>
 #include <rviz/ogre_helpers/arrow.h>
 
 namespace decomp_rviz_plugins {
 class VectorVisual {
-public:
+ public:
   VectorVisual(Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_node);
   ~VectorVisual();
 
@@ -20,7 +20,7 @@ public:
   void setColor(float r, float g, float b, float a);
   void setScale(float s);
 
-private:
+ private:
   std::vector<std::unique_ptr<rviz::Arrow>> objs_;
 
   Ogre::SceneNode *frame_node_;
@@ -30,6 +30,6 @@ private:
   float s_ = 1.0;
   vec_E<std::pair<Vec3f, Vec3f>> vs_;
 };
-}
+}  // namespace decomp_rviz_plugins
 
 #endif

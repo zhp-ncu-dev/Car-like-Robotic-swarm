@@ -1,9 +1,9 @@
-#include <OGRE/OgreSceneNode.h>
 #include <OGRE/OgreSceneManager.h>
-#include <rviz/visualization_manager.h>
+#include <OGRE/OgreSceneNode.h>
+#include <rviz/frame_manager.h>
 #include <rviz/properties/color_property.h>
 #include <rviz/properties/float_property.h>
-#include <rviz/frame_manager.h>
+#include <rviz/visualization_manager.h>
 
 #include <rviz/load_resource.h>
 
@@ -18,19 +18,19 @@ class EllipsoidArrayVisual;
 class EllipsoidArrayDisplay
     : public rviz::MessageFilterDisplay<decomp_ros_msgs::EllipsoidArray> {
   Q_OBJECT
-public:
+ public:
   EllipsoidArrayDisplay();
   ~EllipsoidArrayDisplay();
 
-protected:
+ protected:
   void onInitialize();
 
   void reset();
 
-private Q_SLOTS:
+ private Q_SLOTS:
   void updateColorAndAlpha();
 
-private:
+ private:
   void processMessage(const decomp_ros_msgs::EllipsoidArray::ConstPtr &msg);
 
   std::shared_ptr<EllipsoidArrayVisual> visual_;
@@ -38,4 +38,4 @@ private:
   rviz::ColorProperty *color_property_;
   rviz::FloatProperty *alpha_property_;
 };
-}
+}  // namespace decomp_rviz_plugins

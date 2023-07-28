@@ -10,15 +10,18 @@ double mod(double value, double modulus);
 
 double intbound(double s, double ds);
 
-// void Raycast(const Eigen::Vector2d& start, const Eigen::Vector2d& end, const Eigen::Vector2d& min,
-//              const Eigen::Vector2d& max, int& output_points_cnt, Eigen::Vector2d* output);
+// void Raycast(const Eigen::Vector2d& start, const Eigen::Vector2d& end, const
+// Eigen::Vector2d& min,
+//              const Eigen::Vector2d& max, int& output_points_cnt,
+//              Eigen::Vector2d* output);
 
-// void Raycast(const Eigen::Vector2d& start, const Eigen::Vector2d& end, const Eigen::Vector2d& min,
-//              const Eigen::Vector2d& max, std::vector<Eigen::Vector2d>* output);
+// void Raycast(const Eigen::Vector2d& start, const Eigen::Vector2d& end, const
+// Eigen::Vector2d& min,
+//              const Eigen::Vector2d& max, std::vector<Eigen::Vector2d>*
+//              output);
 
-class RayCaster
-{
-private:
+class RayCaster {
+ private:
   /* data */
   Eigen::Vector2d start_;
   Eigen::Vector2d end_;
@@ -48,13 +51,9 @@ private:
 
   int step_num_;
 
-public:
-  RayCaster(/* args */)
-  {
-  }
-  ~RayCaster()
-  {
-  }
+ public:
+  RayCaster(/* args */) {}
+  ~RayCaster() {}
 
   bool setInput(const Eigen::Vector2d& start, const Eigen::Vector2d& end/* , const Eigen::Vector3d& min,
                 const Eigen::Vector3d& max */);

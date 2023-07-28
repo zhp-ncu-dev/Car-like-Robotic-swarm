@@ -1,35 +1,29 @@
 #include <path_searching/raycast.h>>
-#include <iostream>
-#include <cmath>
 #include <Eigen/Eigen>
+#include <cmath>
+#include <iostream>
 
-int signum(int x)
-{
-  return x == 0 ? 0 : x < 0 ? -1 : 1;
-}
+int signum(int x) { return x == 0 ? 0 : x < 0 ? -1 : 1; }
 
-double mod(double value, double modulus)
-{
+double mod(double value, double modulus) {
   return fmod(fmod(value, modulus) + modulus, modulus);
 }
 
-double intbound(double s, double ds)
-{
+double intbound(double s, double ds) {
   // Find the smallest positive t such that s+t*ds is an integer.
-  if (ds < 0)
-  {
+  if (ds < 0) {
     return intbound(-s, -ds);
-  }
-  else
-  {
+  } else {
     s = mod(s, 1);
     // problem is now s+t*ds = 1
     return (1 - s) / ds;
   }
 }
 
-// void Raycast(const Eigen::Vector2d& start, const Eigen::Vector2d& end, const Eigen::Vector2d& min,
-//              const Eigen::Vector2d& max, int& output_points_cnt, Eigen::Vector2d* output)
+// void Raycast(const Eigen::Vector2d& start, const Eigen::Vector2d& end, const
+// Eigen::Vector2d& min,
+//              const Eigen::Vector2d& max, int& output_points_cnt,
+//              Eigen::Vector2d* output)
 // {
 //   //    std::cout << start << ' ' << end << std::endl;
 //   // From "A Fast Voxel Traversal Algorithm for Ray Tracing"
@@ -88,21 +82,24 @@ double intbound(double s, double ds)
 //   double dist = 0;
 //   while (true)
 //   {
-//     if (x >= min.x() && x < max.x() && y >= min.y() && y < max.y() && z >= min.z() && z < max.z())
+//     if (x >= min.x() && x < max.x() && y >= min.y() && y < max.y() && z >=
+//     min.z() && z < max.z())
 //     {
 //       output[output_points_cnt](0) = x;
 //       output[output_points_cnt](1) = y;
 //       output[output_points_cnt](2) = z;
 
 //       output_points_cnt++;
-//       dist = sqrt((x - start(0)) * (x - start(0)) + (y - start(1)) * (y - start(1)) + (z - start(2)) * (z - start(2)));
+//       dist = sqrt((x - start(0)) * (x - start(0)) + (y - start(1)) * (y -
+//       start(1)) + (z - start(2)) * (z - start(2)));
 
 //       if (dist > maxDist)
 //         return;
 
 //       /*            if (output_points_cnt > 1500) {
-//                       std::cerr << "Error, too many racyast voxels." << std::endl;
-//                       throw std::out_of_range("Too many raycast voxels");
+//                       std::cerr << "Error, too many racyast voxels." <<
+//                       std::endl; throw std::out_of_range("Too many raycast
+//                       voxels");
 //                   }*/
 //     }
 
@@ -144,8 +141,10 @@ double intbound(double s, double ds)
 //   }
 // }
 
-// void Raycast(const Eigen::Vector3d& start, const Eigen::Vector3d& end, const Eigen::Vector3d& min,
-//              const Eigen::Vector3d& max, std::vector<Eigen::Vector3d>* output)
+// void Raycast(const Eigen::Vector3d& start, const Eigen::Vector3d& end, const
+// Eigen::Vector3d& min,
+//              const Eigen::Vector3d& max, std::vector<Eigen::Vector3d>*
+//              output)
 // {
 //   //    std::cout << start << ' ' << end << std::endl;
 //   // From "A Fast Voxel Traversal Algorithm for Ray Tracing"
@@ -206,7 +205,8 @@ double intbound(double s, double ds)
 //   double dist = 0;
 //   while (true)
 //   {
-//     if (x >= min.x() && x < max.x() && y >= min.y() && y < max.y() && z >= min.z() && z < max.z())
+//     if (x >= min.x() && x < max.x() && y >= min.y() && y < max.y() && z >=
+//     min.z() && z < max.z())
 //     {
 //       output->push_back(Eigen::Vector3d(x, y, z));
 
@@ -309,56 +309,51 @@ bool RayCaster::setInput(const Eigen::Vector2d& start, const Eigen::Vector2d& en
     return true;
 }
 
-bool RayCaster::step(Eigen::Vector2d& ray_pt)
-{
-  // if (x_ >= min_.x() && x_ < max_.x() && y_ >= min_.y() && y_ < max_.y() && z_ >= min_.z() && z_ < max_.z())
-  ray_pt = Eigen::Vector2d(x_, y_/*, z_*/);
+bool RayCaster::step(Eigen::Vector2d& ray_pt) {
+  // if (x_ >= min_.x() && x_ < max_.x() && y_ >= min_.y() && y_ < max_.y() &&
+  // z_ >= min_.z() && z_ < max_.z())
+  ray_pt = Eigen::Vector2d(x_, y_ /*, z_*/);
 
   // step_num_++;
 
   // dist_ = (Eigen::Vector3d(x_, y_, z_) - start_).squaredNorm();
 
-  if (x_ == endX_ && y_ == endY_ /*&& z_ == endZ_*/)
-  {
+  if (x_ == endX_ && y_ == endY_ /*&& z_ == endZ_*/) {
     return false;
   }
-  
+
   // if (dist_ > maxDist_)
   // {
   //   return false;
   // }
 
-
   // tMaxX stores the t-value at which we cross a cube boundary along the
   // X axis, and similarly for Y and Z. Therefore, choosing the least tMax
   // chooses the closest cube boundary. Only the first case of the four
   // has been commented in detail.
-  if (tMaxX_ < tMaxY_)
-  {
+  if (tMaxX_ < tMaxY_) {
     // if (tMaxX_ < tMaxZ_)
     // {
-      // Update which cube we are now in.
-      x_ += stepX_;
-      // Adjust tMaxX to the next X-oriented boundary crossing.
-      tMaxX_ += tDeltaX_;
+    // Update which cube we are now in.
+    x_ += stepX_;
+    // Adjust tMaxX to the next X-oriented boundary crossing.
+    tMaxX_ += tDeltaX_;
     // }
     // else
     // {
     //   z_ += stepZ_;
     //   tMaxZ_ += tDeltaZ_;
     // }
-  }
-  else
-  {
+  } else {
     // if (tMaxY_ < tMaxZ_)
     // {
-      y_ += stepY_;
-      tMaxY_ += tDeltaY_;
+    y_ += stepY_;
+    tMaxY_ += tDeltaY_;
     // }
     // else
     // {
-      // z_ += stepZ_;
-      // tMaxZ_ += tDeltaZ_;
+    // z_ += stepZ_;
+    // tMaxZ_ += tDeltaZ_;
     // }
   }
 

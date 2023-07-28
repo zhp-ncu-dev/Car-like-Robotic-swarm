@@ -14,19 +14,19 @@
  copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-
 #ifndef BOOST_NUMERIC_ODEINT_HPP_INCLUDED
 #define BOOST_NUMERIC_ODEINT_HPP_INCLUDED
 
-#include <boost/numeric/odeint/version.hpp>
 #include <boost/numeric/odeint/config.hpp>
+#include <boost/numeric/odeint/version.hpp>
 
-// start with ublas wrapper because we need its specializations before including state_wrapper.hpp
+// start with ublas wrapper because we need its specializations before including
+// state_wrapper.hpp
 #include <boost/numeric/odeint/util/ublas_wrapper.hpp>
 
 #include <boost/numeric/odeint/stepper/euler.hpp>
-#include <boost/numeric/odeint/stepper/runge_kutta4_classic.hpp>
 #include <boost/numeric/odeint/stepper/runge_kutta4.hpp>
+#include <boost/numeric/odeint/stepper/runge_kutta4_classic.hpp>
 #include <boost/numeric/odeint/stepper/runge_kutta_cash_karp54.hpp>
 #include <boost/numeric/odeint/stepper/runge_kutta_cash_karp54_classic.hpp>
 #include <boost/numeric/odeint/stepper/runge_kutta_dopri5.hpp>
@@ -40,7 +40,8 @@
 
 #ifndef __CUDACC__
 /* Bulirsch Stoer with Dense Output does not compile with nvcc
- * because of the binomial library used there which relies on unsupported SSE functions
+ * because of the binomial library used there which relies on unsupported SSE
+ * functions
  */
 #include <boost/numeric/odeint/stepper/bulirsch_stoer_dense_out.hpp>
 #endif
@@ -71,5 +72,4 @@
 
 #include <boost/numeric/odeint/stepper/generation.hpp>
 
-
-#endif // BOOST_NUMERIC_ODEINT_HPP_INCLUDED
+#endif  // BOOST_NUMERIC_ODEINT_HPP_INCLUDED

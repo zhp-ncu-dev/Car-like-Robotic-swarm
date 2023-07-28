@@ -28,15 +28,13 @@ ros::Publisher _odom_pub;
 ros::Subscriber _odom_sub;
 nav_msgs::Odometry _odom;
 
-void rcvOdometryCallbck(const nav_msgs::Odometry &laser_odom)
-{
+void rcvOdometryCallbck(const nav_msgs::Odometry &laser_odom) {
   _odom = laser_odom;
   _odom.header.stamp = ros::Time::now();
   _odom_pub.publish(_odom);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   ros::init(argc, argv, "transmit_odom");
   ros::NodeHandle nh("~");
 

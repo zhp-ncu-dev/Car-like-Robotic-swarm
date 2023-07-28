@@ -5,13 +5,14 @@
 #ifndef DECOMP_GEOMETRIC_UTILS_H
 #define DECOMP_GEOMETRIC_UTILS_H
 
-#include <Eigen/Eigenvalues>
 #include <decomp_basis/data_utils.h>
 #include <decomp_geometry/polyhedron.h>
+#include <Eigen/Eigenvalues>
 #include <iostream>
 
 /// Calculate eigen values
-template <int Dim> Vecf<Dim> eigen_value(const Matf<Dim, Dim> &A) {
+template <int Dim>
+Vecf<Dim> eigen_value(const Matf<Dim, Dim> &A) {
   Eigen::SelfAdjointEigenSolver<Matf<Dim, Dim>> es(A);
   return es.eigenvalues();
 }
@@ -37,12 +38,10 @@ inline Mat3f vec3_to_rotation(const Vec3f &v) {
 /// Sort plannar points in the counter-clockwise order
 inline vec_Vec2f sort_pts(const vec_Vec2f &pts) {
   /// if empty, dont sort
-  if (pts.empty())
-    return pts;
+  if (pts.empty()) return pts;
   /// calculate center point
   Vec2f avg = Vec2f::Zero();
-  for (const auto &pt : pts)
-    avg += pt;
+  for (const auto &pt : pts) avg += pt;
   avg /= pts.size();
 
   /// sort in body frame
@@ -135,16 +134,15 @@ inline vec_E<vec_Vec3f> cal_vertices(const Polyhedron3D &poly) {
     const Vec3f t = vts[i].p_;
     const Vec3f n = vts[i].n_;
     const Quatf q = Quatf::FromTwoVectors(Vec3f(0, 0, 1), n);
-    const Mat3f R(q); // body to world
+    const Mat3f R(q);  // body to world
     vec_E<std::pair<Vec2f, Vec2f>> lines;
     for (unsigned int j = 0; j < vts.size(); j++) {
-      if (j == i)
-        continue;
+      if (j == i) continue;
       Vec3f nw = vts[j].n_;
       Vec3f nb = R.transpose() * nw;
       decimal_t bb = vts[j].p_.dot(nw) - nw.dot(t);
-      Vec2f v = Vec3f(0, 0, 1).cross(nb).topRows<2>(); // line direction
-      Vec2f p;                                         // point on the line
+      Vec2f v = Vec3f(0, 0, 1).cross(nb).topRows<2>();  // line direction
+      Vec2f p;                                          // point on the line
       if (nb(1) != 0)
         p << 0, bb / nb(1);
       else if (nb(0) != 0)
@@ -159,9 +157,8 @@ inline vec_E<vec_Vec3f> cal_vertices(const Polyhedron3D &poly) {
     //**** filter out points inside polytope
     vec_Vec2f pts_inside;
     for (const auto &it : pts) {
-      Vec3f p = R * Vec3f(it(0), it(1), 0) + t; // convert to world frame
-      if (poly.inside(p))
-        pts_inside.push_back(it);
+      Vec3f p = R * Vec3f(it(0), it(1), 0) + t;  // convert to world frame
+      if (poly.inside(p)) pts_inside.push_back(it);
     }
 
     if (pts_inside.size() > 2) {
@@ -199,8 +196,7 @@ inline vec_Vec2f cal_convex_hull(const vec_Vec2f &pts) {
     const auto ref_pt = vs.back();
     Vec2f end_pt = p0;
     for (size_t i = 0; i < pts.size(); i++) {
-      if (pts[i] == ref_pt)
-        continue;
+      if (pts[i] == ref_pt) continue;
       Vec2f dir = (pts[i] - ref_pt).normalized();
       Hyperplane2D hp(ref_pt, Vec2f(-dir(1), dir(0)));
       bool most_left_hp = true;
@@ -248,8 +244,7 @@ inline Polyhedron2D minkowski_sum(const Polyhedron2D &A, const Polyhedron2D &B,
 
   vec_Vec2f C_vertices;
   for (const auto &it : A_vertices) {
-    for (const auto &itt : B_vertices)
-      C_vertices.push_back(it + itt - Bc);
+    for (const auto &itt : B_vertices) C_vertices.push_back(it + itt - Bc);
   }
 
   return get_convex_hull(cal_convex_hull(C_vertices));

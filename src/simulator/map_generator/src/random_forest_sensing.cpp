@@ -61,8 +61,7 @@ pcl::PointCloud<pcl::PointXYZ> cloudMap;
 sensor_msgs::PointCloud2 localMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> clicked_cloud_;
 
-void RandomMapGenerate()
-{
+void RandomMapGenerate() {
   pcl::PointXYZ pt_random;
 
   rand_x = uniform_real_distribution<double>(_x_l, _x_h);
@@ -76,8 +75,7 @@ void RandomMapGenerate()
   rand_z_ = uniform_real_distribution<double>(z_l_, z_h_);
 
   // generate polar obs
-  for (int i = 0; i < _obs_num; i++)
-  {
+  for (int i = 0; i < _obs_num; i++) {
     double x, y, w, h;
     x = rand_x(eng);
     y = rand_y(eng);
@@ -89,12 +87,10 @@ void RandomMapGenerate()
     int widNum = ceil(w / _resolution);
 
     for (int r = -widNum / 2.0; r < widNum / 2.0; r++)
-      for (int s = -widNum / 2.0; s < widNum / 2.0; s++)
-      {
+      for (int s = -widNum / 2.0; s < widNum / 2.0; s++) {
         h = rand_h(eng);
         int heiNum = ceil(h / _resolution);
-        for (int t = -20; t < heiNum; t++)
-        {
+        for (int t = -20; t < heiNum; t++) {
           pt_random.x = x + (r + 0.5) * _resolution + 1e-2;
           pt_random.y = y + (s + 0.5) * _resolution + 1e-2;
           pt_random.z = (t + 0.5) * _resolution + 1e-2;
@@ -104,8 +100,7 @@ void RandomMapGenerate()
   }
 
   // generate circle obs
-  for (int i = 0; i < circle_num_; ++i)
-  {
+  for (int i = 0; i < circle_num_; ++i) {
     double x, y, z;
     x = rand_x(eng);
     y = rand_y(eng);
@@ -127,8 +122,7 @@ void RandomMapGenerate()
 
     // draw a circle centered at (x,y,z)
     Eigen::Vector3d cpt;
-    for (double angle = 0.0; angle < 6.282; angle += _resolution / 2)
-    {
+    for (double angle = 0.0; angle < 6.282; angle += _resolution / 2) {
       cpt(0) = 0.0;
       cpt(1) = radius1 * cos(angle);
       cpt(2) = radius2 * sin(angle);
@@ -137,8 +131,7 @@ void RandomMapGenerate()
       Eigen::Vector3d cpt_if;
       for (int ifx = -0; ifx <= 0; ++ifx)
         for (int ify = -0; ify <= 0; ++ify)
-          for (int ifz = -0; ifz <= 0; ++ifz)
-          {
+          for (int ifz = -0; ifz <= 0; ++ifz) {
             cpt_if = cpt + Eigen::Vector3d(ifx * _resolution, ify * _resolution,
                                            ifz * _resolution);
             cpt_if = rotate * cpt_if + Eigen::Vector3d(x, y, z);
@@ -161,8 +154,7 @@ void RandomMapGenerate()
   _map_ok = true;
 }
 
-void RandomMapGenerateCylinder()
-{
+void RandomMapGenerateCylinder() {
   pcl::PointXYZ pt_random;
 
   vector<Eigen::Vector2d> obs_position;
@@ -179,8 +171,7 @@ void RandomMapGenerateCylinder()
   rand_z_ = uniform_real_distribution<double>(z_l_, z_h_);
 
   // generate polar obs
-  for (int i = 0; i < _obs_num && ros::ok(); i++)
-  {
+  for (int i = 0; i < _obs_num && ros::ok(); i++) {
     double x, y, w, h, inf;
     x = rand_x(eng);
     y = rand_y(eng);
@@ -189,14 +180,12 @@ void RandomMapGenerateCylinder()
 
     bool flag_continue = false;
     for (auto p : obs_position)
-      if ((Eigen::Vector2d(x, y) - p).norm() < _min_dist /*metres*/)
-      {
+      if ((Eigen::Vector2d(x, y) - p).norm() < _min_dist /*metres*/) {
         i--;
         flag_continue = true;
         break;
       }
-    if (flag_continue)
-      continue;
+    if (flag_continue) continue;
 
     obs_position.push_back(Eigen::Vector2d(x, y));
 
@@ -207,17 +196,15 @@ void RandomMapGenerateCylinder()
     double radius = (w * inf) / 2;
 
     for (int r = -widNum / 2.0; r < widNum / 2.0; r++)
-      for (int s = -widNum / 2.0; s < widNum / 2.0; s++)
-      {
+      for (int s = -widNum / 2.0; s < widNum / 2.0; s++) {
         h = rand_h(eng);
         int heiNum = ceil(h / _resolution);
-        for (int t = -10; t < heiNum; t++)
-        {
+        for (int t = -10; t < heiNum; t++) {
           double temp_x = x + (r + 0.5) * _resolution + 1e-2;
           double temp_y = y + (s + 0.5) * _resolution + 1e-2;
           double temp_z = (t + 0.5) * _resolution + 1e-2;
-          if ((Eigen::Vector2d(temp_x, temp_y) - Eigen::Vector2d(x, y)).norm() <= radius)
-          {
+          if ((Eigen::Vector2d(temp_x, temp_y) - Eigen::Vector2d(x, y))
+                  .norm() <= radius) {
             pt_random.x = temp_x;
             pt_random.y = temp_y;
             pt_random.z = temp_z;
@@ -228,8 +215,7 @@ void RandomMapGenerateCylinder()
   }
 
   // generate circle obs
-  for (int i = 0; i < circle_num_; ++i)
-  {
+  for (int i = 0; i < circle_num_; ++i) {
     double x, y, z;
     x = rand_x(eng);
     y = rand_y(eng);
@@ -251,8 +237,7 @@ void RandomMapGenerateCylinder()
 
     // draw a circle centered at (x,y,z)
     Eigen::Vector3d cpt;
-    for (double angle = 0.0; angle < 6.282; angle += _resolution / 2)
-    {
+    for (double angle = 0.0; angle < 6.282; angle += _resolution / 2) {
       cpt(0) = 0.0;
       cpt(1) = radius1 * cos(angle);
       cpt(2) = radius2 * sin(angle);
@@ -261,8 +246,7 @@ void RandomMapGenerateCylinder()
       Eigen::Vector3d cpt_if;
       for (int ifx = -0; ifx <= 0; ++ifx)
         for (int ify = -0; ify <= 0; ++ify)
-          for (int ifz = -0; ifz <= 0; ++ifz)
-          {
+          for (int ifz = -0; ifz <= 0; ++ifz) {
             cpt_if = cpt + Eigen::Vector3d(ifx * _resolution, ify * _resolution,
                                            ifz * _resolution);
             cpt_if = rotate * cpt_if + Eigen::Vector3d(x, y, z);
@@ -295,8 +279,7 @@ void RandomMapGenerateCylinder()
   _map_ok = true;
 }
 
-void clickCallback(const geometry_msgs::PoseStamped &msg)
-{
+void clickCallback(const geometry_msgs::PoseStamped &msg) {
   double x = msg.pose.position.x;
   double y = msg.pose.position.y;
   double w = rand_w(eng);
@@ -309,12 +292,10 @@ void clickCallback(const geometry_msgs::PoseStamped &msg)
   int widNum = ceil(w / _resolution);
 
   for (int r = -widNum / 2.0; r < widNum / 2.0; r++)
-    for (int s = -widNum / 2.0; s < widNum / 2.0; s++)
-    {
+    for (int s = -widNum / 2.0; s < widNum / 2.0; s++) {
       h = rand_h(eng);
       int heiNum = ceil(h / _resolution);
-      for (int t = -1; t < heiNum; t++)
-      {
+      for (int t = -1; t < heiNum; t++) {
         pt_random.x = x + (r + 0.5) * _resolution + 1e-2;
         pt_random.y = y + (s + 0.5) * _resolution + 1e-2;
         pt_random.z = (t + 0.5) * _resolution + 1e-2;
@@ -336,13 +317,10 @@ void clickCallback(const geometry_msgs::PoseStamped &msg)
 }
 
 int i = 0;
-void pubPoints()
-{
-  while (ros::ok())
-  {
+void pubPoints() {
+  while (ros::ok()) {
     ros::spinOnce();
-    if (_map_ok)
-      break;
+    if (_map_ok) break;
   }
 
   pcl::toROSMsg(cloudMap, globalMap_pcd);
@@ -350,13 +328,14 @@ void pubPoints()
   _all_map_pub.publish(globalMap_pcd);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   ros::init(argc, argv, "random_map_sensing");
   ros::NodeHandle n("~");
 
-  _local_map_pub = n.advertise<sensor_msgs::PointCloud2>("/map_generator/local_cloud", 1);
-  _all_map_pub = n.advertise<sensor_msgs::PointCloud2>("/map_generator/global_cloud", 1);
+  _local_map_pub =
+      n.advertise<sensor_msgs::PointCloud2>("/map_generator/local_cloud", 1);
+  _all_map_pub =
+      n.advertise<sensor_msgs::PointCloud2>("/map_generator/global_cloud", 1);
 
   click_map_pub_ =
       n.advertise<sensor_msgs::PointCloud2>("/pcl_render_node/local_map", 1);
@@ -393,7 +372,7 @@ int main(int argc, char **argv)
 
   ros::Duration(0.5).sleep();
 
-//   unsigned int seed = rd();
+  //   unsigned int seed = rd();
   unsigned int seed = 1398191972;
   cout << "seed=" << seed << endl;
   eng.seed(seed);
@@ -403,8 +382,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(_pub_rate);
 
-  while (ros::ok())
-  {
+  while (ros::ok()) {
     pubPoints();
     ros::spinOnce();
     loop_rate.sleep();
@@ -582,7 +560,8 @@ int main(int argc, char **argv)
 
 //     double theta = rand_theta_(eng);
 //     Eigen::Matrix3d rotate;
-//     rotate << cos(theta), -sin(theta), 0.0, sin(theta), cos(theta), 0.0, 0, 0, 1;
+//     rotate << cos(theta), -sin(theta), 0.0, sin(theta), cos(theta), 0.0, 0,
+//     0, 1;
 
 //     double radius1 = rand_radius_(eng);
 //     double radius2 = rand_radius2_(eng);
@@ -601,11 +580,10 @@ int main(int argc, char **argv)
 //         for (int ify = -1; ify <= 1; ++ify)
 //           for (int ifz = -1; ifz <= 1; ++ifz)
 //           {
-//             cpt_if = cpt + Eigen::Vector3d(ifx * _resolution, ify * _resolution, ifz * _resolution);
-//             cpt_if = rotate * cpt_if + Eigen::Vector3d(x, y, z);
-//             pt_random.x = cpt_if(0);
-//             pt_random.y = cpt_if(1);
-//             pt_random.z = cpt_if(2);
+//             cpt_if = cpt + Eigen::Vector3d(ifx * _resolution, ify *
+//             _resolution, ifz * _resolution); cpt_if = rotate * cpt_if +
+//             Eigen::Vector3d(x, y, z); pt_random.x = cpt_if(0); pt_random.y =
+//             cpt_if(1); pt_random.z = cpt_if(2);
 //             cloudMap.push_back(pt_random);
 //           }
 //     }
@@ -685,7 +663,8 @@ int main(int argc, char **argv)
 //           pt_random.x = x + (r + 0.5) * _resolution + 1e-2;
 //           pt_random.y = y + (s + 0.5) * _resolution + 1e-2;
 //           pt_random.z = (t + 0.5) * _resolution + 1e-2;
-//           if (sqrt(pow(pt_random.x - x, 2) + pow(pt_random.y - y, 2)) > _w_h / 2)
+//           if (sqrt(pow(pt_random.x - x, 2) + pow(pt_random.y - y, 2)) > _w_h
+//           / 2)
 //             continue;
 //           cloudMap.points.push_back(pt_random);
 //         }
@@ -732,11 +711,14 @@ int main(int argc, char **argv)
 
 //     double theta = (double)rand() / RAND_MAX * (2 * theta_) - theta_;
 //     Eigen::Matrix3d rotate;
-//     rotate << cos(theta), -sin(theta), 0.0, sin(theta), cos(theta), 0.0, 0, 0, 1;
+//     rotate << cos(theta), -sin(theta), 0.0, sin(theta), cos(theta), 0.0, 0,
+//     0, 1;
 
-//     double radius1 = (double)rand() / RAND_MAX * (radius_h_ - radius_l_) + radius_l_;
+//     double radius1 = (double)rand() / RAND_MAX * (radius_h_ - radius_l_) +
+//     radius_l_;
 //     ;
-//     double radius2 = (double)rand() / RAND_MAX * (1.2 - radius_l_) + radius_l_;
+//     double radius2 = (double)rand() / RAND_MAX * (1.2 - radius_l_) +
+//     radius_l_;
 
 //     // draw a circle centered at (x,y,z)
 //     Eigen::Vector3d cpt;
@@ -752,11 +734,10 @@ int main(int argc, char **argv)
 //         for (int ify = -1; ify <= 1; ++ify)
 //           for (int ifz = -1; ifz <= 1; ++ifz)
 //           {
-//             cpt_if = cpt + Eigen::Vector3d(ifx * _resolution, ify * _resolution, ifz * _resolution);
-//             cpt_if = rotate * cpt_if + Eigen::Vector3d(x, y, z);
-//             pt_random.x = cpt_if(0);
-//             pt_random.y = cpt_if(1);
-//             pt_random.z = cpt_if(2);
+//             cpt_if = cpt + Eigen::Vector3d(ifx * _resolution, ify *
+//             _resolution, ifz * _resolution); cpt_if = rotate * cpt_if +
+//             Eigen::Vector3d(x, y, z); pt_random.x = cpt_if(0); pt_random.y =
+//             cpt_if(1); pt_random.z = cpt_if(2);
 //             cloudMap.push_back(pt_random);
 //           }
 //     }
@@ -1037,7 +1018,8 @@ int main(int argc, char **argv)
 //   ros::NodeHandle n("~");
 
 //   _local_map_pub = n.advertise<sensor_msgs::PointCloud2>("random_forest", 1);
-//   _all_map_pub = n.advertise<sensor_msgs::PointCloud2>("/map_generator/global_cloud", 1);
+//   _all_map_pub =
+//   n.advertise<sensor_msgs::PointCloud2>("/map_generator/global_cloud", 1);
 
 //   n.param("init_state_x", _init_x, 0.0);
 //   n.param("init_state_y", _init_y, 0.0);
@@ -1091,7 +1073,9 @@ int main(int argc, char **argv)
 //   // fp_.seekg(0);
 //   // fp_ >> num;
 //   // _map_file_name = _map_file_dir + to_string(num) + string(".pcd");
-//   // if ( !flag_record_pcd_file && pcl::io::loadPCDFile<pcl::PointXYZ>(_map_file_name.c_str(), cloudMap_buf) == 0 )
+//   // if ( !flag_record_pcd_file &&
+//   pcl::io::loadPCDFile<pcl::PointXYZ>(_map_file_name.c_str(), cloudMap_buf)
+//   == 0 )
 //   // {
 //   //   cout << "cloudMap.size()=" << cloudMap_buf.size() << endl;
 
@@ -1099,7 +1083,8 @@ int main(int argc, char **argv)
 //   //   {
 //   //     for ( size_t i=0; i<cloudMap_buf.points.size(); ++i )
 //   //     {
-//   //       if ( cloudMap_buf.points[i].x < 0 && cloudMap_buf.points[i].x > -4 &&
+//   //       if ( cloudMap_buf.points[i].x < 0 && cloudMap_buf.points[i].x > -4
+//   &&
 //   //           cloudMap_buf.points[i].y < 2 && cloudMap_buf.points[i].y > -2)
 //   //       {
 //   //         cloudMap.points.push_back( cloudMap_buf.points[i] );

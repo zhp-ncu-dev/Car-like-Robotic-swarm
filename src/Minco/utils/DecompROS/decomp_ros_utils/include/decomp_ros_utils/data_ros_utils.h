@@ -3,14 +3,15 @@
 
 #include <decomp_geometry/ellipsoid.h>
 #include <decomp_geometry/polyhedron.h>
-#include <sensor_msgs/PointCloud.h>
-#include <decomp_ros_msgs/PolyhedronArray.h>
 #include <decomp_ros_msgs/EllipsoidArray.h>
+#include <decomp_ros_msgs/PolyhedronArray.h>
 #include <nav_msgs/Path.h>
+#include <sensor_msgs/PointCloud.h>
 
 namespace DecompROS {
 
-template <int Dim> nav_msgs::Path vec_to_path(const vec_Vecf<Dim> &vs) {
+template <int Dim>
+nav_msgs::Path vec_to_path(const vec_Vecf<Dim>& vs) {
   nav_msgs::Path path;
   for (const auto& it : vs) {
     geometry_msgs::PoseStamped pose;
@@ -28,7 +29,7 @@ template <int Dim> nav_msgs::Path vec_to_path(const vec_Vecf<Dim> &vs) {
   return path;
 }
 
-inline sensor_msgs::PointCloud vec_to_cloud(const vec_Vec3f &pts) {
+inline sensor_msgs::PointCloud vec_to_cloud(const vec_Vec3f& pts) {
   sensor_msgs::PointCloud cloud;
   cloud.points.resize(pts.size());
 
@@ -40,7 +41,7 @@ inline sensor_msgs::PointCloud vec_to_cloud(const vec_Vec3f &pts) {
   return cloud;
 }
 
-inline vec_Vec3f cloud_to_vec(const sensor_msgs::PointCloud &cloud) {
+inline vec_Vec3f cloud_to_vec(const sensor_msgs::PointCloud& cloud) {
   vec_Vec3f pts;
   pts.resize(cloud.points.size());
   for (unsigned int i = 0; i < cloud.points.size(); i++) {
@@ -52,32 +53,29 @@ inline vec_Vec3f cloud_to_vec(const sensor_msgs::PointCloud &cloud) {
   return pts;
 }
 
-inline Polyhedron3D ros_to_polyhedron(const decomp_ros_msgs::Polyhedron& msg){
+inline Polyhedron3D ros_to_polyhedron(const decomp_ros_msgs::Polyhedron& msg) {
   Polyhedron3D poly;
-  for(unsigned int i = 0; i < msg.points.size(); i++){
-    Vec3f pt(msg.points[i].x,
-             msg.points[i].y,
-             msg.points[i].z);
-    Vec3f n(msg.normals[i].x,
-            msg.normals[i].y,
-            msg.normals[i].z);
+  for (unsigned int i = 0; i < msg.points.size(); i++) {
+    Vec3f pt(msg.points[i].x, msg.points[i].y, msg.points[i].z);
+    Vec3f n(msg.normals[i].x, msg.normals[i].y, msg.normals[i].z);
     poly.add(Hyperplane3D(pt, n));
   }
   return poly;
 }
 
-inline vec_E<Polyhedron3D> ros_to_polyhedron_array(const decomp_ros_msgs::PolyhedronArray& msg) {
+inline vec_E<Polyhedron3D> ros_to_polyhedron_array(
+    const decomp_ros_msgs::PolyhedronArray& msg) {
   vec_E<Polyhedron3D> polys(msg.polyhedrons.size());
 
-  for(size_t i = 0; i < msg.polyhedrons.size(); i++)
+  for (size_t i = 0; i < msg.polyhedrons.size(); i++)
     polys[i] = ros_to_polyhedron(msg.polyhedrons[i]);
 
   return polys;
 }
 
-inline decomp_ros_msgs::Polyhedron polyhedron_to_ros(const Polyhedron2D& poly){
+inline decomp_ros_msgs::Polyhedron polyhedron_to_ros(const Polyhedron2D& poly) {
   decomp_ros_msgs::Polyhedron msg;
-  for (const auto &p : poly.hyperplanes()) {
+  for (const auto& p : poly.hyperplanes()) {
     geometry_msgs::Point pt, n;
     pt.x = p.p_(0);
     pt.y = p.p_(1);
@@ -104,9 +102,9 @@ inline decomp_ros_msgs::Polyhedron polyhedron_to_ros(const Polyhedron2D& poly){
   return msg;
 }
 
-inline decomp_ros_msgs::Polyhedron polyhedron_to_ros(const Polyhedron3D& poly){
+inline decomp_ros_msgs::Polyhedron polyhedron_to_ros(const Polyhedron3D& poly) {
   decomp_ros_msgs::Polyhedron msg;
-  for (const auto &p : poly.hyperplanes()) {
+  for (const auto& p : poly.hyperplanes()) {
     geometry_msgs::Point pt, n;
     pt.x = p.p_(0);
     pt.y = p.p_(1);
@@ -121,29 +119,29 @@ inline decomp_ros_msgs::Polyhedron polyhedron_to_ros(const Polyhedron3D& poly){
   return msg;
 }
 
-
 template <int Dim>
-decomp_ros_msgs::PolyhedronArray polyhedron_array_to_ros(const vec_E<Polyhedron<Dim>>& vs){
+decomp_ros_msgs::PolyhedronArray polyhedron_array_to_ros(
+    const vec_E<Polyhedron<Dim>>& vs) {
   decomp_ros_msgs::PolyhedronArray msg;
-  for (const auto &v : vs)
-    msg.polyhedrons.push_back(polyhedron_to_ros(v));
+  for (const auto& v : vs) msg.polyhedrons.push_back(polyhedron_to_ros(v));
   return msg;
 }
 
 template <int Dim>
-decomp_ros_msgs::EllipsoidArray ellipsoid_array_to_ros(const vec_E<Ellipsoid<Dim>>& Es) {
+decomp_ros_msgs::EllipsoidArray ellipsoid_array_to_ros(
+    const vec_E<Ellipsoid<Dim>>& Es) {
   decomp_ros_msgs::EllipsoidArray ellipsoids;
   for (unsigned int i = 0; i < Es.size(); i++) {
     decomp_ros_msgs::Ellipsoid ellipsoid;
     auto d = Es[i].d();
     ellipsoid.d[0] = d(0);
     ellipsoid.d[1] = d(1);
-    ellipsoid.d[2] = Dim == 2 ? 0:d(2);
+    ellipsoid.d[2] = Dim == 2 ? 0 : d(2);
 
     auto C = Es[i].C();
     for (int x = 0; x < 3; x++) {
       for (int y = 0; y < 3; y++) {
-        if(x < Dim && y < Dim)
+        if (x < Dim && y < Dim)
           ellipsoid.E[3 * x + y] = C(x, y);
         else
           ellipsoid.E[3 * x + y] = 0;
@@ -155,6 +153,6 @@ decomp_ros_msgs::EllipsoidArray ellipsoid_array_to_ros(const vec_E<Ellipsoid<Dim
   return ellipsoids;
 }
 
-}
+}  // namespace DecompROS
 
 #endif

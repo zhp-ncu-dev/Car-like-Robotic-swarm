@@ -18,25 +18,23 @@ PolyhedronArrayDisplay::PolyhedronArrayDisplay() {
   scale_property_ = new rviz::FloatProperty("Scale", 0.1, "bound scale.", this,
                                             SLOT(updateScale()));
 
-  vs_scale_property_ = new rviz::FloatProperty("VsScale", 1.0, "Vs scale.", this,
-                                               SLOT(updateVsScale()));
+  vs_scale_property_ = new rviz::FloatProperty("VsScale", 1.0, "Vs scale.",
+                                               this, SLOT(updateVsScale()));
 
   vs_color_property_ =
-    new rviz::ColorProperty("VsColor", QColor(0, 255, 0), "Vs color.",
-                            this, SLOT(updateVsColorAndAlpha()));
-
-
+      new rviz::ColorProperty("VsColor", QColor(0, 255, 0), "Vs color.", this,
+                              SLOT(updateVsColorAndAlpha()));
 
   state_property_ = new rviz::EnumProperty(
-      "State", "Mesh", "A Polygon can be represented as two states: Mesh and "
-                       "Bound, this option allows selecting visualizing Polygon"
-                       "in corresponding state",
+      "State", "Mesh",
+      "A Polygon can be represented as two states: Mesh and "
+      "Bound, this option allows selecting visualizing Polygon"
+      "in corresponding state",
       this, SLOT(updateState()));
   state_property_->addOption("Mesh", 0);
   state_property_->addOption("Bound", 1);
   state_property_->addOption("Both", 2);
   state_property_->addOption("Vs", 3);
-
 }
 
 void PolyhedronArrayDisplay::onInitialize() { MFDClass::onInitialize(); }
@@ -50,7 +48,8 @@ void PolyhedronArrayDisplay::reset() {
   visual_vector_ = nullptr;
 }
 
-void PolyhedronArrayDisplay::processMessage(const decomp_ros_msgs::PolyhedronArray::ConstPtr &msg) {
+void PolyhedronArrayDisplay::processMessage(
+    const decomp_ros_msgs::PolyhedronArray::ConstPtr& msg) {
   if (!context_->getFrameManager()->getTransform(
           msg->header.frame_id, msg->header.stamp, position_, orientation_)) {
     ROS_DEBUG("Error transforming from frame '%s' to frame '%s'",
@@ -63,7 +62,7 @@ void PolyhedronArrayDisplay::processMessage(const decomp_ros_msgs::PolyhedronArr
 
   const auto polys = DecompROS::ros_to_polyhedron_array(*msg);
 
-  for(const auto& polyhedron: polys){
+  for (const auto& polyhedron : polys) {
     vec_E<vec_Vec3f> bds = cal_vertices(polyhedron);
     vertices_.insert(vertices_.end(), bds.begin(), bds.end());
     const auto vs = polyhedron.cal_normals();
@@ -106,7 +105,8 @@ void PolyhedronArrayDisplay::visualizeBound() {
 
 void PolyhedronArrayDisplay::visualizeVs() {
   std::shared_ptr<VectorVisual> visual_vector;
-  visual_vector.reset(new VectorVisual(context_->getSceneManager(), scene_node_));
+  visual_vector.reset(
+      new VectorVisual(context_->getSceneManager(), scene_node_));
 
   visual_vector->setMessage(vs_);
   visual_vector->setFramePosition(position_);
@@ -120,26 +120,26 @@ void PolyhedronArrayDisplay::visualizeVs() {
 
 void PolyhedronArrayDisplay::visualizeMessage(int state) {
   switch (state) {
-  case 0:
-    visual_bound_ = nullptr;
-    visual_vector_ = nullptr;
-    visualizeMesh();
-    break;
-  case 1:
-    visual_mesh_ = nullptr;
-    visual_vector_ = nullptr;
-    visualizeBound();
-    break;
-  case 2:
-    visual_vector_ = nullptr;
-    visualizeMesh();
-    visualizeBound();
-    break;
-  case 3:
-    visualizeVs();
-    break;
-  default:
-    std::cout << "Invalid State: " << state << std::endl;
+    case 0:
+      visual_bound_ = nullptr;
+      visual_vector_ = nullptr;
+      visualizeMesh();
+      break;
+    case 1:
+      visual_mesh_ = nullptr;
+      visual_vector_ = nullptr;
+      visualizeBound();
+      break;
+    case 2:
+      visual_vector_ = nullptr;
+      visualizeMesh();
+      visualizeBound();
+      break;
+    case 3:
+      visualizeVs();
+      break;
+    default:
+      std::cout << "Invalid State: " << state << std::endl;
   }
 }
 
@@ -147,16 +147,13 @@ void PolyhedronArrayDisplay::updateMeshColorAndAlpha() {
   float alpha = alpha_property_->getFloat();
   Ogre::ColourValue color = mesh_color_property_->getOgreColor();
 
-  if(visual_mesh_)
-    visual_mesh_->setColor(color.r, color.g, color.b, alpha);
+  if (visual_mesh_) visual_mesh_->setColor(color.r, color.g, color.b, alpha);
 }
 
 void PolyhedronArrayDisplay::updateBoundColorAndAlpha() {
   Ogre::ColourValue color = bound_color_property_->getOgreColor();
-  if(visual_bound_)
-    visual_bound_->setColor(color.r, color.g, color.b, 1.0);
+  if (visual_bound_) visual_bound_->setColor(color.r, color.g, color.b, 1.0);
 }
-
 
 void PolyhedronArrayDisplay::updateState() {
   int state = state_property_->getOptionInt();
@@ -165,22 +162,20 @@ void PolyhedronArrayDisplay::updateState() {
 
 void PolyhedronArrayDisplay::updateScale() {
   float s = scale_property_->getFloat();
-  if(visual_bound_)
-    visual_bound_->setScale(s);
+  if (visual_bound_) visual_bound_->setScale(s);
 }
 
 void PolyhedronArrayDisplay::updateVsScale() {
   float s = vs_scale_property_->getFloat();
-  if(visual_vector_)
-    visual_vector_->setScale(s);
+  if (visual_vector_) visual_vector_->setScale(s);
 }
 
 void PolyhedronArrayDisplay::updateVsColorAndAlpha() {
   Ogre::ColourValue color = vs_color_property_->getOgreColor();
-  if(visual_vector_)
-    visual_vector_->setColor(color.r, color.g, color.b, 1);
+  if (visual_vector_) visual_vector_->setColor(color.r, color.g, color.b, 1);
 }
-}
+}  // namespace decomp_rviz_plugins
 
 #include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS(decomp_rviz_plugins::PolyhedronArrayDisplay, rviz::Display)
+PLUGINLIB_EXPORT_CLASS(decomp_rviz_plugins::PolyhedronArrayDisplay,
+                       rviz::Display)
